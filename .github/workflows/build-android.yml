@@ -2,8 +2,8 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ] # Déclenche le build à chaque push sur main/master (ou adaptez selon votre branche)
-  workflow_dispatch: # Permet aussi de lancer le build manuellement depuis l'onglet Actions de GitHub
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,10 +25,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: ⚙️ Setup EAS CLI
+      - name: ⚙️ Setup Expo and EAS
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
+          expo-version: 7.x
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
@@ -36,6 +36,6 @@ jobs:
         run: npm ci
 
       - name: 🚀 Build Android APK (Preview)
-        run: eas build --platform android --profile preview --non-interactive
+        run: npx eas build --platform android --profile preview --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
