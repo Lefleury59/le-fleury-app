@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "appli-le-Fleury",
+    "slug": "appli-le-Fleury",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "applilefleury",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.votreom.applilefleury"
+    },
+    "android": {
+      "package": "com.lefleury.app",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "539a0782-e55c-49cd-ba07-949bdece3b08"
+      },
+      "router": {
+        "origin": false
+      }
+    },
+    "owner": "deand59"
+  }
+}
