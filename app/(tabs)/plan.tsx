@@ -1,29 +1,71 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function PlanScreen() {
+  // HTML intégré qui affiche l'image en plein écran avec le support tactile natif du zoom (pinch-to-zoom)
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: auto;
+          }
+          .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <!-- Si votre image est en ligne, mettez son URL directe. Si elle est locale dans les assets, l'URL ci-dessous pointe vers le fichier ou l'asset packagé -->
+          <img src="https://www.hebergeur-image.fr/uploads/20261109/d0ffd9940a75cc3b495c676d24fe3357764ea2a6.jpg" />
+        </div>
+      </body>
+    </html>
+  `;
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>🗺️ Plan du Parc Le Fleury</Text>
-      <Text style={styles.subtitle}>Emplacement des attractions et des services</Text>
+      <Text style={styles.subtitle}>Pincez l'écran pour zoomer et explorer le parc</Text>
 
       <View style={styles.mapContainer}>
-        {/* Chemin relatif correct depuis le dossier app vers assets/images/plan-parc.jpg */}
-        <Image 
-          source={require('../assets/images/plan-parc.jpg')} 
-          style={styles.mapImage}
-          resizeMode="contain"
+        <WebView 
+          source={{ html: htmlContent }} 
+          style={styles.webview}
+          scalesPageToFit={true}
+          bounces={false}
+          javaScriptEnabled={true}
         />
       </View>
-      
-      <Text style={styles.hint}>Zoomez sur l'écran pour explorer les différentes zones du parc.</Text>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { 
-    flexGrow: 1, 
+    flex: 1, 
     alignItems: 'center', 
     backgroundColor: '#f4f6f8', 
     padding: 16 
@@ -38,28 +80,22 @@ const styles = StyleSheet.create({
   subtitle: { 
     fontSize: 13, 
     color: '#666', 
-    marginBottom: 20, 
+    marginBottom: 15, 
     textAlign: 'center' 
   },
   mapContainer: { 
     width: '100%', 
-    height: Dimensions.get('window').height * 0.7, 
+    flex: 1,
     backgroundColor: '#fff', 
     borderRadius: 12, 
     overflow: 'hidden', 
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
+    marginBottom: 10
   },
-  mapImage: { 
-    width: '100%', 
-    height: '100%' 
-  },
-  hint: { 
-    marginTop: 15, 
-    fontSize: 12, 
-    color: '#888', 
-    fontStyle: 'italic', 
-    textAlign: 'center' 
+  webview: {
+    flex: 1,
+    backgroundColor: 'transparent'
   }
 });
