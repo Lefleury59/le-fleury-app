@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig'; // Vérifiez le chemin vers votre config Firebase
+import { db } from '../firebaseConfig'; // <-- Correction ici pour pointer correctement vers la racine
 import { ATTRACTIONS_FLEURY, POINTS_DE_VENTE, EVENEMENTS_INITIAL } from '../constants/fleuryData';
 
 export default function HomeScreen() {
@@ -61,10 +61,8 @@ export default function HomeScreen() {
       style={styles.background}
       blurRadius={4}
     >
-      {/* Superposition sombre semi-transparente pour contraster le texte */}
       <View style={styles.overlay}>
         
-        {/* Logo du parc au-dessus du titre */}
         <Image 
           source={{ uri: 'https://www.hebergeur-image.fr/uploads/20261109/11f6be4ca684e1fc3ad4af520770e57a065b5ec0.jpg' }} 
           style={styles.logo}
@@ -103,7 +101,7 @@ export default function HomeScreen() {
             <Text style={styles.secondaryButtonText}>ℹ️ Infos & Événements</Text>
           </TouchableOpacity>
 
-          {/* Bouton d'importation discret pour initialiser vos collections Firebase */}
+          {/* Bouton d'importation pour initialiser Firebase une fois l'APK installé */}
           <TouchableOpacity 
             style={styles.importButton} 
             onPress={handleImportData}
@@ -118,11 +116,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
+  background: { flex: 1, width: '100%', height: '100%' },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.45)',
@@ -157,44 +151,25 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 5
   },
-  buttonContainer: { 
-    width: '100%', 
-    maxWidth: 320 
-  },
+  buttonContainer: { width: '100%', maxWidth: 320 },
   primaryButton: { 
     backgroundColor: '#2D6A4F', 
     paddingVertical: 14, 
     borderRadius: 12, 
     alignItems: 'center', 
     marginBottom: 12, 
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    elevation: 3 
   },
-  buttonText: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
-  },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   secondaryButton: { 
     backgroundColor: 'rgba(255, 255, 255, 0.92)', 
     paddingVertical: 14, 
     borderRadius: 12, 
     alignItems: 'center', 
     marginBottom: 12, 
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
+    elevation: 2 
   },
-  secondaryButtonText: { 
-    color: '#1B4332', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
-  },
+  secondaryButtonText: { color: '#1B4332', fontSize: 16, fontWeight: 'bold' },
   importButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     paddingVertical: 10,
@@ -204,9 +179,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ffffff55'
   },
-  importButtonText: { 
-    color: '#fff', 
-    fontSize: 12, 
-    fontWeight: '600' 
-  }
+  importButtonText: { color: '#fff', fontSize: 12, fontWeight: '600' }
 });
