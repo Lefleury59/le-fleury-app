@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817003691959",
+    "project_id": "app-le-fleury",
+    "storage_bucket": "app-le-fleury.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817003691959:android:b2901d0ca957427104b232",
+        "android_client_info": {
+          "package_name": "com.lefleury.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArf0xfuCLzJHujxyPEuWZQEZ98wzW4wek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
