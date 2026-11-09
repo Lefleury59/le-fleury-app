@@ -19,7 +19,6 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>🗺️ Voir le Plan du Parc</Text>
         </TouchableOpacity>
 
-        {/* Bouton ajouté pour accéder directement à la liste des attractions */}
         <TouchableOpacity 
           style={styles.secondaryButton} 
           onPress={() => router.push('/attractions' as any)}
@@ -40,13 +39,6 @@ export default function HomeScreen() {
         >
           <Text style={styles.secondaryButtonText}>ℹ️ Infos & Événements</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.adminButton} 
-          onPress={() => router.push('/admin' as any)}
-        >
-          <Text style={styles.adminButtonText}>🛠️ Espace Administrateur</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -61,7 +53,5 @@ const styles = StyleSheet.create({
   primaryButton: { backgroundColor: '#2D6A4F', paddingVertical: 14, borderRadius: 10, alignItems: 'center', marginBottom: 12, elevation: 2 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   secondaryButton: { backgroundColor: '#fff', paddingVertical: 14, borderRadius: 10, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: '#ddd', elevation: 1 },
-  secondaryButtonText: { color: '#2D6A4F', fontSize: 16, fontWeight: 'bold' },
-  adminButton: { backgroundColor: '#333', paddingVertical: 12, borderRadius: 10, alignItems: 'center', marginTop: 10 },
-  adminButtonText: { color: '#fff', fontSize: 14, fontWeight: 'bold' }
+  secondaryButtonText: { color: '#2D6A4F', fontSize: 16, fontWeight: 'bold' }
 });
