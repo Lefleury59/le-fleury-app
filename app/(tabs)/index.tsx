@@ -1,22 +1,72 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig'; // Vérifiez le chemin vers votre config Firebase
+import { ATTRACTIONS_FLEURY, POINTS_DE_VENTE, EVENEMENTS_INITIAL } from '../constants/fleuryData';
 
 export default function HomeScreen() {
   const router = useRouter();
 
+  // Fonction pour injecter toutes vos données locales dans Firebase Firestore
+  const handleImportData = async () => {
+    try {
+      console.log("🚀 Début de l'importation dans Firebase...");
+
+      // 1. Importation des Attractions
+      for (const item of ATTRACTIONS_FLEURY) {
+        await setDoc(doc(db, "attractions", item.id), {
+          nom: item.name,
+          zone: item.zone,
+          type: item.type,
+          restrictions: item.restrictions || "",
+          image: item.image || "",
+          isOpen: item.isOpen ?? true,
+          horaires: item.horaires || "10h00 - 18h00",
+          attente: "10 min",
+          numeroPlan: item.numeroPlan || 0
+        });
+      }
+
+      // 2. Importation des Points de Vente
+      for (const item of POINTS_DE_VENTE) {
+        await setDoc(doc(db, "points_de_vente", item.id), {
+          nom: item.name,
+          zone: item.zone,
+          type: item.type,
+          isOpen: item.isOpen ?? true,
+          horaires: item.horaires || "11h00 - 18h00",
+          numeroPlan: item.numeroPlan || ""
+        });
+      }
+
+      // 3. Importation des Événements
+      for (const item of EVENEMENTS_INITIAL) {
+        await setDoc(doc(db, "evenements", item.id), {
+          titre: item.title,
+          heure: `${item.time} - ${item.location}`
+        });
+      }
+
+      Alert.alert("Succès", "🎉 Toutes vos données ont été importées dans Firebase !");
+    } catch (error: any) {
+      console.error("❌ Erreur lors de l'importation : ", error);
+      Alert.alert("Erreur", error.message);
+    }
+  };
+
   return (
     <ImageBackground 
-      source={{ uri: 'https://www.hebergeur-image.fr/uploads/20261109/74d2420dbbefed787843ae15a80b6fb601fe1c7e.jpeg' }} // Vous pouvez remplacer par une belle photo d'ambiance du parc
+      source={{ uri: 'https://www.hebergeur-image.fr/uploads/20261109/74d2420dbbefed787843ae15a80b6fb601fe1c7e.jpeg' }} 
       style={styles.background}
-      blurRadius={4} // Effet flouté pour l'arrière-plan
+      blurRadius={4}
     >
       {/* Superposition sombre semi-transparente pour contraster le texte */}
       <View style={styles.overlay}>
         
         {/* Logo du parc au-dessus du titre */}
         <Image 
-          source={{ uri: 'https://www.hebergeur-image.fr/uploads/20261109/11f6be4ca684e1fc3ad4af520770e57a065b5ec0.jpg' }} // Remplacez par le lien de votre logo officiel
+          source={{ uri: 'https://www.hebergeur-image.fr/uploads/20261109/11f6be4ca684e1fc3ad4af520770e57a065b5ec0.jpg' }} 
           style={styles.logo}
           resizeMode="cover"
         />
@@ -52,6 +102,14 @@ export default function HomeScreen() {
           >
             <Text style={styles.secondaryButtonText}>ℹ️ Infos & Événements</Text>
           </TouchableOpacity>
+
+          {/* Bouton d'importation discret pour initialiser vos collections Firebase */}
+          <TouchableOpacity 
+            style={styles.importButton} 
+            onPress={handleImportData}
+          >
+            <Text style={styles.importButtonText}>☁️ Synchroniser les données (Admin)</Text>
+          </TouchableOpacity>
         </View>
 
       </View>
@@ -67,7 +125,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)', // Assombrit l'arrière-plan flouté pour faire ressortir les textes et boutons
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -93,7 +151,7 @@ const styles = StyleSheet.create({
   subtitle: { 
     fontSize: 14, 
     color: '#e0e0e0', 
-    marginBottom: 35, 
+    marginBottom: 30, 
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
@@ -136,5 +194,19 @@ const styles = StyleSheet.create({
     color: '#1B4332', 
     fontSize: 16, 
     fontWeight: 'bold' 
+  },
+  importButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ffffff55'
+  },
+  importButtonText: { 
+    color: '#fff', 
+    fontSize: 12, 
+    fontWeight: '600' 
   }
 });
