@@ -19,6 +19,14 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>🗺️ Voir le Plan du Parc</Text>
         </TouchableOpacity>
 
+        {/* Bouton ajouté pour accéder directement à la liste des attractions */}
+        <TouchableOpacity 
+          style={styles.secondaryButton} 
+          onPress={() => router.push('/attractions' as any)}
+        >
+          <Text style={styles.secondaryButtonText}>🎢 Liste des Attractions</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity 
           style={styles.secondaryButton} 
           onPress={() => router.push('/explore' as any)}
