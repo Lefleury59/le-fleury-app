@@ -5,18 +5,18 @@ export default function PlanScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>🗺️ Plan du Parc Le Fleury</Text>
-      <Text style={styles.subtitle}>Découvrez l'emplacement de toutes nos attractions et services</Text>
+      <Text style={styles.subtitle}>Emplacement des attractions et des services</Text>
 
       <View style={styles.mapContainer}>
-        {/* Remplacez l'URL par l'image locale ou le lien officiel de votre plan */}
+        {/* Chemin relatif correct depuis le dossier app vers assets/images/plan-parc.jpg */}
         <Image 
-          source={{ uri: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?q=80&w=1000&auto=format&fit=crop' }} 
+          source={require('../assets/images/plan-parc.jpg')} 
           style={styles.mapImage}
           resizeMode="contain"
         />
       </View>
       
-      <Text style={styles.hint}>Pincez l'écran pour zoomer sur une zone spécifique du parc.</Text>
+      <Text style={styles.hint}>Zoomez sur l'écran pour explorer les différentes zones du parc.</Text>
     </ScrollView>
   );
 }
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: { 
     width: '100%', 
-    height: Dimensions.get('window').height * 0.65, 
+    height: Dimensions.get('window').height * 0.7, 
     backgroundColor: '#fff', 
     borderRadius: 12, 
     overflow: 'hidden', 
@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
     width: '100%', 
     height: '100%' 
   },
-  hint: {
-    marginTop: 15,
-    fontSize: 12,
-    color: '#888',
-    fontStyle: 'italic',
-    textAlign: 'center'
+  hint: { 
+    marginTop: 15, 
+    fontSize: 12, 
+    color: '#888', 
+    fontStyle: 'italic', 
+    textAlign: 'center' 
   }
 });
