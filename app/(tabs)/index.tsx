@@ -3,8 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, Alert
 import { useRouter } from 'expo-router';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
-import { ATTRACTIONS_FLEURY, POINTS_DE_VENTE, EVENEMENTS_INITIAL } from '@/constants/fleuryData';
-
+import { ATTRACTIONS_FLEURY, POINTS_DE_VENTE, EVENEMENTS_INITIAL } from '../../constants/fleuryData';
 export default function HomeScreen() {
   const router = useRouter();
 
