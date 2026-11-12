@@ -37,46 +37,57 @@ export default function AttractionsScreen() {
         <FlatList
           data={attractions}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              {/* Image de l'attraction si disponible */}
-              {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-              ) : null}
+          renderItem={({ item }) => {
+            // Détermination du statut (ouvert par défaut à true si non défini)
+            const isOpen = item.isOpen !== false;
 
-              <View style={styles.cardContent}>
-                <View style={styles.titleRow}>
-                  <Text style={styles.title}>{item.nom || item.name || 'Attraction'}</Text>
-                  {item.numeroPlan ? (
-                    <Text style={styles.planBadge}>N° {item.numeroPlan}</Text>
-                  ) : null}
-                </View>
-
-                {item.zone ? (
-                  <Text style={styles.zone}>📍 Zone : {item.zone}</Text>
+            return (
+              <View style={styles.card}>
+                {/* Image de l'attraction si disponible */}
+                {item.image ? (
+                  <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
                 ) : null}
 
-                <Text style={styles.desc}>
-                  {item.description || item.desc || 'Découvrez cette attraction sensationnelle !'}
-                </Text>
+                <View style={styles.cardContent}>
+                  <View style={styles.titleRow}>
+                    <Text style={styles.title}>{item.nom || item.name || 'Attraction'}</Text>
+                    {item.numeroPlan ? (
+                      <Text style={styles.planBadge}>N° {item.numeroPlan}</Text>
+                    ) : null}
+                  </View>
 
-                {/* Horaires et Temps d'attente */}
-                <View style={styles.infoRow}>
-                  {item.horaires ? (
-                    <Text style={styles.infoText}>🕒 {item.horaires}</Text>
-                  ) : null}
-                  {item.attente ? (
-                    <Text style={styles.waitTime}>⏱️ {item.attente}</Text>
+                  {/* Badge de Statut (Ouvert / Fermé) */}
+                  <View style={styles.statusRow}>
+                    <View style={[styles.statusBadge, { backgroundColor: isOpen ? '#E9F5ED' : '#FEE2E2' }]}>
+                      <Text style={[styles.statusText, { color: isOpen ? '#2D6A4F' : '#DC2626' }]}>
+                        {isOpen ? '🟢 Ouvert' : '🔴 Fermé'}
+                      </Text>
+                    </View>
+                    {item.zone ? <Text style={styles.zone}>📍 {item.zone}</Text> : null}
+                  </View>
+
+                  <Text style={styles.desc}>
+                    {item.description || item.desc || 'Découvrez cette attraction sensationnelle !'}
+                  </Text>
+
+                  {/* Horaires et Temps d'attente */}
+                  <View style={styles.infoRow}>
+                    {item.horaires ? (
+                      <Text style={styles.infoText}>🕒 {item.horaires}</Text>
+                    ) : null}
+                    {item.attente ? (
+                      <Text style={styles.waitTime}>⏱️ {item.attente}</Text>
+                    ) : null}
+                  </View>
+
+                  {/* Restrictions d'accès */}
+                  {item.restrictions ? (
+                    <Text style={styles.restrictions}>⚠️ {item.restrictions}</Text>
                   ) : null}
                 </View>
-
-                {/* Restrictions d'accès */}
-                {item.restrictions ? (
-                  <Text style={styles.restrictions}>⚠️ {item.restrictions}</Text>
-                ) : null}
               </View>
-            </View>
-          )}
+            );
+          }}
         />
       )}
     </View>
@@ -93,7 +104,10 @@ const styles = StyleSheet.create({
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   title: { fontSize: 18, fontWeight: 'bold', color: '#2D6A4F', flex: 1 },
   planBadge: { backgroundColor: '#E9F5ED', color: '#2D6A4F', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, fontSize: 12, fontWeight: 'bold' },
-  zone: { fontSize: 12, color: '#666', marginBottom: 6, fontWeight: '600' },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 10 },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  statusText: { fontSize: 11, fontWeight: 'bold' },
+  zone: { fontSize: 12, color: '#666', fontWeight: '600' },
   desc: { fontSize: 13, color: '#555', marginBottom: 10 },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6, borderTopWidth: 1, borderTopColor: '#f0f0f0', paddingTop: 8 },
   infoText: { fontSize: 12, color: '#444' },
