@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
 import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../../firebaseConfig'; // Ajustez le chemin selon votre dossier
+import { db } from '@/firebaseConfig';
 
 export default function AttractionsScreen() {
   const [attractions, setAttractions] = useState<any[]>([]);
