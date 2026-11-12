@@ -12,13 +12,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="plan"
-        options={{
-          title: 'Plan',
-          tabBarIcon: ({ color, size }) => <Ionicons name="map-outline" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="attractions"
         options={{
           title: 'Attractions',
@@ -28,7 +21,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="points"
         options={{
-          title: 'Boutiques',
+          title: 'Se restaurer',
           tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} />,
         }}
       />
@@ -40,10 +33,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="infos"
+        name="plan"
         options={{
-          title: 'Infos',
-          tabBarIcon: ({ color, size }) => <Ionicons name="information-circle-outline" size={size} color={color} />,
+          title: 'Plan',
+          tabBarIcon: ({ color, size }) => <Ionicons name="map-outline" size={size} color={color} />,
         }}
       />
     </Tabs>
