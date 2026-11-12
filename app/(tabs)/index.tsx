@@ -11,7 +11,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image 
-            source={require('../../../assets/images/logo-fleury.jpg')} 
+            source={require('../../assets/images/logo-fleury.jpg')} 
             style={styles.logo} 
             resizeMode="cover"
           />
@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    overflow: 'hidden', // Empêche l'image de dépasser des bords arrondis
+    overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#2D6A4F'
   },
-  logo: { width: '100%', height: '100%' }, // Remplit parfaitement le cercle sans déformation
+  logo: { width: '100%', height: '100%' },
   title: { fontSize: 24, fontWeight: 'bold', color: '#1B4332' },
   subtitle: { fontSize: 13, color: '#666', marginTop: 2 },
   menuGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', maxWidth: 400 },
