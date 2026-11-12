@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image } from 'react-native';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 
@@ -8,7 +8,6 @@ export default function AttractionsScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Écoute en temps réel de la collection 'attractions'
     const unsubscribe = onSnapshot(collection(db, 'attractions'), (snapshot) => {
       const list = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -40,11 +39,42 @@ export default function AttractionsScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.title}>{item.nom || item.name || 'Attraction'}</Text>
-              <Text style={styles.desc}>{item.description || item.desc || 'Découvrez cette attraction sensationnelle !'}</Text>
-              {item.tempsAttente && (
-                <Text style={styles.info}>⏱️ Temps d'attente : {item.tempsAttente} min</Text>
-              )}
+              {/* Image de l'attraction si disponible */}
+              {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+              ) : null}
+
+              <View style={styles.cardContent}>
+                <View style={styles.titleRow}>
+                  <Text style={styles.title}>{item.nom || item.name || 'Attraction'}</Text>
+                  {item.numeroPlan ? (
+                    <Text style={styles.planBadge}>N° {item.numeroPlan}</Text>
+                  ) : null}
+                </View>
+
+                {item.zone ? (
+                  <Text style={styles.zone}>📍 Zone : {item.zone}</Text>
+                ) : null}
+
+                <Text style={styles.desc}>
+                  {item.description || item.desc || 'Découvrez cette attraction sensationnelle !'}
+                </Text>
+
+                {/* Horaires et Temps d'attente */}
+                <View style={styles.infoRow}>
+                  {item.horaires ? (
+                    <Text style={styles.infoText}>🕒 {item.horaires}</Text>
+                  ) : null}
+                  {item.attente ? (
+                    <Text style={styles.waitTime}>⏱️ {item.attente}</Text>
+                  ) : null}
+                </View>
+
+                {/* Restrictions d'accès */}
+                {item.restrictions ? (
+                  <Text style={styles.restrictions}>⚠️ {item.restrictions}</Text>
+                ) : null}
+              </View>
             </View>
           )}
         />
@@ -57,9 +87,17 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f4f6f8', padding: 16 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#1B4332', marginBottom: 15, textAlign: 'center' },
-  card: { backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, elevation: 2, borderWidth: 1, borderColor: '#eee' },
-  title: { fontSize: 16, fontWeight: 'bold', color: '#2D6A4F', marginBottom: 4 },
-  desc: { fontSize: 13, color: '#666', marginBottom: 6 },
-  info: { fontSize: 12, fontWeight: 'bold', color: '#D97706' },
+  card: { backgroundColor: '#fff', borderRadius: 12, marginBottom: 16, overflow: 'hidden', elevation: 3, borderWidth: 1, borderColor: '#eee' },
+  image: { width: '100%', height: 160 },
+  cardContent: { padding: 14 },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  title: { fontSize: 18, fontWeight: 'bold', color: '#2D6A4F', flex: 1 },
+  planBadge: { backgroundColor: '#E9F5ED', color: '#2D6A4F', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, fontSize: 12, fontWeight: 'bold' },
+  zone: { fontSize: 12, color: '#666', marginBottom: 6, fontWeight: '600' },
+  desc: { fontSize: 13, color: '#555', marginBottom: 10 },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6, borderTopWidth: 1, borderTopColor: '#f0f0f0', paddingTop: 8 },
+  infoText: { fontSize: 12, color: '#444' },
+  waitTime: { fontSize: 12, fontWeight: 'bold', color: '#D97706' },
+  restrictions: { fontSize: 11, color: '#DC2626', backgroundColor: '#FEF2F2', padding: 6, borderRadius: 6, marginTop: 4 },
   emptyText: { textAlign: 'center', color: '#888', marginTop: 40 }
 });

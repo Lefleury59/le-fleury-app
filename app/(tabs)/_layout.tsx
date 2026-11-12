@@ -1,51 +1,57 @@
-// app/(tabs)/_layout.tsx
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/firebaseConfig';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
-export default function TabLayout() {
+export default function RootLayout() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const segments = useSegments();
+
+  // Écoute de l'état de connexion Firebase en temps réel
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      if (initializing) {
+        setInitializing(false);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // Gestion de la redirection automatique
+  useEffect(() => {
+    if (initializing) return;
+
+    const inAuthGroup = segments[0] === 'login';
+
+    if (!user && !inAuthGroup) {
+      // Si l'utilisateur n'est pas connecté et n'est pas sur la page login -> Redirection vers login
+      router.replace('/login');
+    } else if (user && inAuthGroup) {
+      // Si l'utilisateur est connecté et est sur la page login -> Redirection vers l'accueil du parc
+      router.replace('/(tabs)');
+    }
+  }, [user, initializing, segments]);
+
+  if (initializing) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#2D6A4F" />
+      </View>
+    );
+  }
+
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: '#1e88e5' }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Attractions',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="compass" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="plan"
-        options={{
-          title: 'Plan',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="map" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Restauration',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="restaurant" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="billets"
-        options={{
-          title: 'Mes Billets',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="ticket" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="info"
-        options={{
-          title: 'Infos',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="information-circle" size={size} color={color} />,
-        }}
-      />
-    </Tabs>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="(tabs)" />
+    </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f4f6f8' }
+});
