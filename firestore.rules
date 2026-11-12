@@ -1,0 +1,12 @@
+rules_version = '2'; // Version du compilateur de règles (toujours 2 aujourd'hui)
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Règle générale qui s'applique à tous les documents de la base (/{document=**})
+    match /{document=**} {
+      allow read, write: if true; // Conditions (ici : tout le monde peut lire et écrire)
+    }
+    
+  }
+}

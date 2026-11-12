@@ -1,80 +1,88 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { EVENEMENTS_INITIAL, Evenement } from '../../constants/fleuryData';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { collection, doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
-export default function InfoScreen() {
-  const [openingHours, setOpeningHours] = useState('10h00 - 18h30');
-  const [events, setEvents] = useState<Evenement[]>(EVENEMENTS_INITIAL);
-  const [isAdmin, setIsAdmin] = useState(false);
+export default function EvenementsScreen() {
+  const [evenements, setEvenements] = useState<any[]>([]);
+  const [parcHoraires, setParcHoraires] = useState<string>('Chargement des horaires...');
+  const [loading, setLoading] = useState(true);
 
-  const updateTime = (id: string, newTime: string) => {
-    setEvents(events.map(ev => ev.id === id ? { ...ev, time: newTime } : ev));
-  };
+  useEffect(() => {
+    // 1. Écoute en temps réel de la liste des événements
+    const unsubEvents = onSnapshot(collection(db, 'evenements'), (snapshot) => {
+      const list = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setEvenements(list);
+    });
+
+    // 2. Écoute en temps réel des horaires généraux du parc (depuis un document 'config/parc')
+    const unsubConfig = onSnapshot(doc(db, 'config', 'parc'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setParcHoraires(data.horairesParc || "10h00 - 18h00");
+      } else {
+        setParcHoraires("10h00 - 18h00 (Horaires par défaut)");
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Erreur horaires parc :", error);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubEvents();
+      unsubConfig();
+    };
+  }, []);
+
+  if (loading) {
+    return <View style={styles.center}><ActivityIndicator size="large" color="#2D6A4F" /></View>;
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.headerTitle}>ℹ️ Infos & Événements</Text>
-
-      {/* Bouton bascule Mode Admin */}
-      <TouchableOpacity style={styles.adminToggle} onPress={() => setIsAdmin(!isAdmin)}>
-        <Text style={styles.adminToggleText}>{isAdmin ? '🔒 Quitter Mode Admin' : '🔐 Mode Admin (Équipe)'}</Text>
-      </TouchableOpacity>
-
-      {/* Horaires d'ouverture */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>🕒 Horaires d'ouverture du jour</Text>
-        {isAdmin ? (
-          <TextInput 
-            style={styles.input} 
-            value={openingHours} 
-            onChangeText={setOpeningHours} 
-            placeholder="Ex: 10h00 - 19h00"
-          />
-        ) : (
-          <Text style={styles.hoursText}>Aujourd'hui : {openingHours}</Text>
-        )}
+    <View style={styles.container}>
+      {/* Encart Horaires du Parc dynamique */}
+      <View style={styles.horairesCard}>
+        <Text style={styles.horairesTitle}>🕒 Horaires d'ouverture du Parc</Text>
+        <Text style={styles.horairesText}>{parcHoraires}</Text>
       </View>
 
-      {/* Événements du jour */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>✨ Événements du Jour</Text>
-        {events.map((ev) => (
-          <View key={ev.id} style={styles.eventRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.eventTitle}>{ev.title}</Text>
-              <Text style={styles.eventLoc}>📍 {ev.location}</Text>
+      <Text style={styles.headerTitle}>🎉 Événements & Spectacles</Text>
+
+      {evenements.length === 0 ? (
+        <Text style={styles.emptyText}>Aucun événement prévu pour l'instant.</Text>
+      ) : (
+        <FlatList
+          data={evenements}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.title}>{item.nom || item.titre || 'Événement'}</Text>
+              <Text style={styles.desc}>{item.description || item.desc || ''}</Text>
+              {item.horaire && (
+                <Text style={styles.info}>🕒 Horaire de l'animation : {item.horaire}</Text>
+              )}
             </View>
-            {isAdmin ? (
-              <TextInput 
-                style={styles.inputSmall} 
-                value={ev.time} 
-                onChangeText={(text) => updateTime(ev.id, text)} 
-              />
-            ) : (
-              <View style={styles.timeBadge}>
-                <Text style={styles.timeText}>{ev.time}</Text>
-              </View>
-            )}
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+          )}
+        />
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f4f6f8', padding: 16 },
-  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#1B4332', marginTop: 10, marginBottom: 10 },
-  adminToggle: { backgroundColor: '#2D6A4F', padding: 10, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
-  adminToggleText: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 15, elevation: 2 },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#1B4332', marginBottom: 10 },
-  hoursText: { fontSize: 15, color: '#333', fontWeight: 'bold' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, fontSize: 14 },
-  inputSmall: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 6, width: 80, textAlign: 'center' },
-  eventRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  eventTitle: { fontSize: 14, fontWeight: 'bold', color: '#222' },
-  eventLoc: { fontSize: 12, color: '#666' },
-  timeBadge: { backgroundColor: '#E8F5E9', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  timeText: { color: '#2D6A4F', fontWeight: 'bold', fontSize: 12 }
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  horairesCard: { backgroundColor: '#2D6A4F', padding: 16, borderRadius: 12, marginBottom: 20, alignItems: 'center', elevation: 3 },
+  horairesTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', marginBottom: 4 },
+  horairesText: { color: '#E8F5E9', fontSize: 16, fontWeight: '600' },
+  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#1B4332', marginBottom: 15, textAlign: 'center' },
+  card: { backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, elevation: 2, borderWidth: 1, borderColor: '#eee' },
+  title: { fontSize: 16, fontWeight: 'bold', color: '#2D6A4F', marginBottom: 4 },
+  desc: { fontSize: 13, color: '#666', marginBottom: 6 },
+  info: { fontSize: 12, fontWeight: 'bold', color: '#2563EB' },
+  emptyText: { textAlign: 'center', color: '#888', marginTop: 20 }
 });

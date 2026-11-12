@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebaseConfig'; // Vérifiez le chemin relatif vers votre fichier firebaseConfig
+import { collection, onSnapshot } from 'firebase/firestore'; // <-- onSnapshot remplace getDocs
+import { db } from '../../firebaseConfig';
 
 export default function RestoScreen() {
   const [pointsDeVente, setPointsDeVente] = useState<any[]>([]);
@@ -10,24 +10,23 @@ export default function RestoScreen() {
 
   const zones = ['Toutes', 'Le Bayou', "Le monde d'Elios", 'Carotte Ville'];
 
-  // Charger les points de vente depuis Firestore au démarrage
+  // Écoute des points de vente en temps réel depuis Firestore
   useEffect(() => {
-    async function fetchPointsDeVente() {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'pointsDeVente'));
-        const list: any[] = [];
-        querySnapshot.forEach((doc) => {
-          list.push({ id: doc.id, ...doc.data() });
-        });
-        setPointsDeVente(list);
-      } catch (error) {
-        console.error("Erreur lors du chargement des points de vente depuis Firebase :", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    // ATTENTION : Vérifiez dans Firebase si votre collection s'appelle 'pointsDeVente' ou 'points_de_vente'
+    const unsubscribe = onSnapshot(collection(db, 'pointsDeVente'), (querySnapshot) => {
+      const list: any[] = [];
+      querySnapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      setPointsDeVente(list);
+      setLoading(false);
+    }, (error) => {
+      console.error("Erreur de synchronisation temps réel des points de vente :", error);
+      setLoading(false);
+    });
 
-    fetchPointsDeVente();
+    // Nettoyage de l'écouteur à la fermeture de l'écran
+    return () => unsubscribe();
   }, []);
 
   const filteredPoints = selectedZone === 'Toutes'
