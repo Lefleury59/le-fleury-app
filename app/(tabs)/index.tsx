@@ -7,13 +7,13 @@ export default function HomeScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* En-tête avec logo ajusté et centré */}
+      {/* En-tête avec le logo-fleury.jpg ajusté et centré dans son rond */}
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image 
-            source={require('@/assets/images/logo.png')} // Ajustez le chemin de votre logo si besoin
+            source={require('../../../assets/images/logo-fleury.jpg')} 
             style={styles.logo} 
-            resizeMode="contain"
+            resizeMode="cover"
           />
         </View>
         <Text style={styles.title}>Parc Le Fleury</Text>
@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: '#f4f6f8', padding: 20, alignItems: 'center' },
   header: { alignItems: 'center', marginBottom: 30, marginTop: 10 },
   logoContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    width: 84,
+    height: 84,
+    borderRadius: 42,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    overflow: 'hidden',
+    overflow: 'hidden', // Empêche l'image de dépasser des bords arrondis
     borderWidth: 2,
     borderColor: '#2D6A4F'
   },
-  logo: { width: '70%', height: '70%' }, // Logo réduit pour tenir parfaitement dans le rond
+  logo: { width: '100%', height: '100%' }, // Remplit parfaitement le cercle sans déformation
   title: { fontSize: 24, fontWeight: 'bold', color: '#1B4332' },
   subtitle: { fontSize: 13, color: '#666', marginTop: 2 },
   menuGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', maxWidth: 400 },
