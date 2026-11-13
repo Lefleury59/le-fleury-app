@@ -94,6 +94,16 @@ export default function AttractionsScreen() {
 
                   <Text style={styles.desc}>{item.description || item.desc || ''}</Text>
 
+                  {/* Section des restrictions et de la taille */}
+                  {(item.restrictions || item.tailleMin || item.taille) ? (
+                    <View style={styles.restrictionBox}>
+                      <Text style={styles.restrictionText}>
+                        ⚠️ {item.restrictions || `Taille requise : ${item.tailleMin || item.taille}`}
+                      </Text>
+                    </View>
+                  ) : null}
+
+                  {/* Horaires et Temps d'attente */}
                   <View style={styles.infoRow}>
                     {item.horaires ? <Text style={styles.infoText}>🕒 {item.horaires}</Text> : null}
                     {item.attente ? <Text style={styles.waitTime}>⏱️ {item.attente}</Text> : null}
@@ -120,14 +130,16 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#fff', borderRadius: 12, marginBottom: 16, overflow: 'hidden', elevation: 3, borderWidth: 1, borderColor: '#eee' },
   image: { width: '100%', height: 150 },
   cardContent: { padding: 14 },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: `4` },
   title: { fontSize: 18, fontWeight: 'bold', color: '#2D6A4F', flex: 1 },
   planBadge: { backgroundColor: '#E9F5ED', color: '#2D6A4F', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, fontSize: 12, fontWeight: 'bold' },
   statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 10 },
   statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
   statusText: { fontSize: 11, fontWeight: 'bold' },
   zone: { fontSize: 12, color: '#666', fontWeight: '600' },
-  desc: { fontSize: 13, color: '#555', marginBottom: 10 },
+  desc: { fontSize: 13, color: '#555', marginBottom: 8 },
+  restrictionBox: { backgroundColor: '#FFFBEB', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, marginBottom: 8, borderWidth: 1, borderColor: '#FEF3C7' },
+  restrictionText: { fontSize: 12, color: '#B45309', fontWeight: '600' },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f0f0f0', paddingTop: 8 },
   infoText: { fontSize: 12, color: '#444' },
   waitTime: { fontSize: 12, fontWeight: 'bold', color: '#D97706' },
