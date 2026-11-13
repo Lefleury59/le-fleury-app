@@ -34,8 +34,8 @@ export default function AttractionsScreen() {
       setFilteredAttractions(attractions);
     } else {
       const filtered = attractions.filter(item => 
-        item.zone && item.zone.toLowerCase().includes(category.toLowerCase()) ||
-        item.type && item.type.toLowerCase().includes(category.toLowerCase())
+        (item.zone && item.zone.toLowerCase().includes(category.toLowerCase())) ||
+        (item.type && item.type.toLowerCase().includes(category.toLowerCase()))
       );
       setFilteredAttractions(filtered);
     }
@@ -49,7 +49,7 @@ export default function AttractionsScreen() {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>🎢 Attractions du Parc</Text>
       
-      {/* Boutons de filtres */}
+      {/* Filtres par catégorie */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
         {categories.map((cat) => (
           <TouchableOpacity
